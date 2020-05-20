@@ -81,7 +81,7 @@ class Model_products extends CI_Model
 	//get sale yearly
 	public function get_saleYearly()
 	{
-		$sql = "SELECT SUM(gross_amount) AS sale_yearly, year(sales_date) AS Year FROM orders GROUP BY year(sales_date)";
+		$sql = "SELECT SUM(gross_amount) AS sale_yearly, year(sales_date) AS Year FROM orders ";
 		$query = $this->db->query($sql);
 		return $query->result();
 	}
