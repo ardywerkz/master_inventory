@@ -58,6 +58,11 @@
               </div>
 
               <div class="form-group">
+                <label for="qty">Date Expire</label>
+                <input type="text" class="form-control" id="date" name="date_expire" data-date-format="yyyy-mm-dd" placeholder="Format ( Y-m-d )" autocomplete="off" />
+              </div>
+
+              <div class="form-group">
                 <label for="description">Description</label>
                 <textarea type="text" class="form-control" id="description" name="description" placeholder="Enter 
                   description" autocomplete="off">
@@ -128,6 +133,10 @@
 
 <script type="text/javascript">
   $(document).ready(function() {
+    $('#date').datepicker({
+      autoclose: true,
+      dateFormat: 'yy-mm-dd',
+    })
     $(".select_group").select2();
     $("#description").wysihtml5();
 

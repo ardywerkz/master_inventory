@@ -85,4 +85,32 @@ class Model_products extends CI_Model
 		$query = $this->db->query($sql);
 		return $query->result();
 	}
+
+
+	//get product expire
+	public function get_product_expire($limit, $start, $st = "", $orderField, $orderDirection)
+	{
+		$this->db->select('*');
+		$this->db->from('products');
+		$this->db->or_like('name', $st);
+		$this->db->or_like('price', $st);
+		$this->db->or_like('date_expire', $st);
+		$this->db->limit($limit, $start);
+		$this->db->order_by($orderField, $orderDirection);
+		$this->db->order_by('created_at', 'DESC');
+		$query = $this->db->get();
+
+		return $query->result();
+	}
+	public function count_product_expire($limit, $start, $st = "", $orderField, $orderDirection)
+	{
+		$this->db->select();
+		$this->db->from('products');
+		$this->db->or_like('name', $st);
+		$this->db->or_like('price', $st);
+		$this->db->or_like('date_expire', $st);
+		$this->db->order_by($orderField, $orderDirection);
+		$query = $this->db->get();
+		return $query->num_rows();
+	}
 }

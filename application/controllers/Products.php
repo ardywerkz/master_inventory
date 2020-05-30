@@ -95,6 +95,7 @@ class Products extends Admin_Controller
         $this->form_validation->set_rules('price', 'Price', 'trim|required');
         $this->form_validation->set_rules('qty', 'Qty', 'trim|required');
         $this->form_validation->set_rules('store', 'Store', 'trim|required');
+        $this->form_validation->set_rules('date_expire', 'Product date expire', 'trim|required');
         $this->form_validation->set_rules('availability', 'Availability', 'trim|required');
 
 
@@ -111,6 +112,7 @@ class Products extends Admin_Controller
                 'category_id' => json_encode($this->input->post('category')),
                 'store_id' => $this->input->post('store'),
                 'availability' => $this->input->post('availability'),
+                'date_expire' => $this->input->post('date_expire'),
             );
 
             $create = $this->model_products->create($data);
@@ -278,5 +280,49 @@ class Products extends Admin_Controller
         }
 
         echo json_encode($response);
+    }
+
+    public function expire_product()
+    {
+        if (!in_array('viewProduct', $this->permission)) {
+            redirect('dashboard', 'refresh');
+        }
+
+        $config['base_url'] = base_url('products/expire_product');
+
+        $config['per_page'] = ($this->input->get('limitRows')) ? $this->input->get('limitRows') : 10;
+        $config['enable_query_strings'] = TRUE;
+        $config['page_query_string'] = TRUE;
+        $config['reuse_query_string'] = TRUE;
+
+        // integrate bootstrap pagination
+        $config['full_tag_open'] = '<ul class="pagination">';
+        $config['full_tag_close'] = '</ul>';
+
+        $config['first_tag_open'] = '<li>';
+        $config['first_tag_close'] = '</li>';
+        $config['prev_link'] = 'Prev';
+        $config['prev_tag_open'] = '<li class="prev">';
+        $config['prev_tag_close'] = '</li>';
+        $config['next_link'] = 'Next';
+        $config['next_tag_open'] = '<li>';
+        $config['next_tag_close'] = '</li>';
+        $config['last_tag_open'] = '<li>';
+        $config['last_tag_close'] = '</li>';
+        $config['cur_tag_open'] = '<li class="active"><a href="' . $config['base_url'] . '?per_page=0">';
+        $config['cur_tag_close'] = '</a></li>';
+        $config['num_tag_open'] = '<li>';
+        $config['num_tag_close'] = '</li>';
+
+        $data['page'] = ($this->input->get('per_page')) ? $this->input->get('per_page') : 0;
+        $data['searchFor'] = ($this->input->get('query')) ? $this->input->get('query') : NULL;
+        $data['orderField'] = ($this->input->get('orderField')) ? $this->input->get('orderField') : '';
+        $data['orderDirection'] = ($this->input->get('orderDirection')) ? $this->input->get('orderDirection') : '';
+
+        $this->data['expired'] = $this->model_products->get_product_expire($config["per_page"], $data['page'], $data['searchFor'], $data['orderField'], $data['orderDirection']);
+        $config['total_rows'] = $this->model_products->count_product_expire($config["per_page"], $data['page'], $data['searchFor'], $data['orderField'], $data['orderDirection']);
+        $this->pagination->initialize($config);
+        $this->data['pagination'] = $this->pagination->create_links();
+        $this->render_template('products/expire', $this->data);
     }
 }
